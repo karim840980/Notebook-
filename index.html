@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Aman Notebook - Professional Note Taking</title>
+    <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#fbbc04">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+    <style>
+        :root {
+            --primary: #fbbc04;
+            --primary-dark: #f9ab00;
+            --sidebar-bg: #1a1c1e;
+            --sidebar-text: #bdc1c6;
+            --sidebar-hover: #303134;
+            --sidebar-active: #41331c;
+            --text-primary: #202124;
+            --text-secondary: #5f6368;
+            --bg-light: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --border: #e0e0e0;
+            --success: #34a853;
+            --delete: #d93025;
+            --archive: #5f6368;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0; 
+            padding: 0; 
+        }
+
+        body { 
+            background-color: var(--bg-secondary); 
+            color: var(--text-primary); 
+            overflow-x: hidden;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--primary);
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            gap: 15px;
+        }
+
+        .menu-icon { 
+            cursor: pointer; 
+            padding: 8px; 
+            border-radius: 50%; 
+            width: 40px; 
+            height: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+
+        .menu-icon:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        .menu-icon span { 
+            background: var(--text-secondary);
+            width: 20px; 
+            height: 2px; 
+            margin: 3px 0;
+            transition: all 0.3s;
+        }
+
+        .logo { 
+            font-size: 22px; 
+            font-weight: 700; 
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
+        }
+
+        .header-spacer {
+            flex: 1;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            font-size: 20px;
+            transition: background-color 0.2s;
+        }
+
+        .icon-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        /* --- Professional Sidebar --- */
+        .sidebar {
+            height: 100%; 
+            width: 0; 
+            position: fixed; 
+            z-index: 1000;
+            top: 0; 
+            left: 0; 
+            background-color: var(--sidebar-bg);
+            background: linear-gradient(135deg, #0f1012 0%, #1a1c1e 100%);
+            overflow-x: hidden; 
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            padding-top: 0;
+            box-shadow: 8px 0 16px rgba(0,0,0,0.5);
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 56px;
+            background: linear-gradient(135deg, rgba(251,188,4,0.08) 0%, transparent 100%);
+        }
+
+        .sidebar-title { 
+            font-size: 18px; 
+            color: #fff;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-menu {
+            padding: 16px 0;
+        }
+
+        .sidebar a {
+            padding: 14px 20px; 
+            text-decoration: none; 
+            font-size: 15px; 
+            color: var(--sidebar-text);
+            display: flex; 
+            align-items: center; 
+            gap: 16px;
+            margin: 4px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            position: relative;
+        }
+
+        .sidebar a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, transparent 100%);
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: -1;
+        }
+
+        .sidebar a:hover { 
+            background-color: rgba(251,188,4,0.12);
+            color: #e8eaed;
+            transform: translateX(4px);
+        }
+
+        .sidebar a:hover::before {
+            opacity: 0.5;
+        }
+
+        .sidebar a.active { 
+            background: linear-gradient(135deg, rgba(251,188,4,0.2) 0%, rgba(251,188,4,0.05) 100%);
+            color: #fbefd1; 
+            font-weight: 700;
+            border-left: 3px solid var(--primary);
+            padding-left: 17px;
+            box-shadow: inset 0 0 24px rgba(251,188,4,0.1);
+        }
+
+        .sidebar-icon {
+            font-size: 20px;
+            min-width: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-divider {
+            border-color: rgba(255,255,255,0.08); 
+            margin: 16px 12px;
+            opacity: 1;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer a {
+            font-size: 12px;
+            color: rgba(189, 193, 198, 0.6);
+            padding: 6px 0;
+            margin: 0;
+        }
+
+        .overlay { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.4); 
+            z-index: 999;
+            transition: opacity 0.3s;
+        }
+
+        /* --- Input Box (Create Note) --- */
+        .input-container { 
+            max-width: 600px; 
+            margin: 24px auto; 
+            padding: 0 16px; 
+        }
+
+        .input-box {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            background: var(--bg-light);
+            transition: all 0.2s;
+        }
+
+        .input-box:focus-within {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            border-color: var(--primary);
+        }
+
+        .input-box input, .input-box textarea {
+            width: 100%; 
+            border: none; 
+            outline: none; 
+            font-size: 15px; 
+            background: transparent;
+            color: var(--text-primary);
+        }
+
+        .input-box input::placeholder, .input-box textarea::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .input-box textarea { 
+            min-height: 50px; 
+            resize: none; 
+            margin-top: 12px;
+            font-family: inherit;
+        }
+
+        .btn-row { 
+            display: flex; 
+            justify-content: flex-end; 
+            gap: 10px;
+            margin-top: 12px; 
+        }
+
+        .save-btn, .close-btn { 
+            background: none; 
+            border: none; 
+            color: var(--primary); 
+            font-weight: 600; 
+            cursor: pointer; 
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .save-btn:hover {
+            background-color: rgba(251, 188, 4, 0.1);
+            color: var(--primary-dark);
+        }
+
+        .close-btn {
+            color: var(--text-secondary);
+        }
+
+        .close-btn:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        /* --- Section Views --- */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes highlight {
+            0% { background-color: var(--primary); }
+            100% { background-color: var(--bg-light); }
+        }
+
+        .section-header {
+            max-width: 600px;
+            margin: 24px auto;
+            padding: 0 16px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .section-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state {
+            max-width: 600px;
+            margin: 60px auto;
+            padding: 0 16px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-text {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        /* --- Notes Grid --- */
+        #notesGrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 16px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .note {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            position: relative;
+            transition: all 0.2s;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .note:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .note h3 { 
+            font-size: 16px; 
+            font-weight: 600;
+            margin-bottom: 8px; 
+            color: var(--text-primary);
+        }
+
+        .note p { 
+            font-size: 14px; 
+            color: var(--text-secondary);
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .note-actions {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .note-action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .delete-btn {
+            color: var(--delete);
+        }
+
+        .delete-btn:hover {
+            background-color: rgba(217, 48, 37, 0.1);
+        }
+
+        .archive-btn {
+            color: var(--archive);
+        }
+
+        .archive-btn:hover {
+            background-color: rgba(95, 99, 104, 0.1);
+        }
+
+        /* --- Archive/Deleted View --- */
+        .items-list {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 16px;
+        }
+
+        .item-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .item-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .item-info h4 {
+            font-size: 15px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .item-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .item-action-btn {
+            background: none;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .restore-btn {
+            color: var(--success);
+        }
+
+        .restore-btn:hover {
+            background-color: rgba(52, 168, 83, 0.1);
+        }
+
+        .permanent-delete-btn {
+            color: var(--delete);
+        }
+
+        .permanent-delete-btn:hover {
+            background-color: rgba(217, 48, 37, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            #notesGrid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 12px;
+                padding: 12px;
+            }
+
+            .sidebar {
+                top: 56px;
+            }
+
+            .sidebar-header {
+                margin-top: 0;
+                padding-top: 10px;
+            }
+
+            header {
+                padding: 12px 16px;
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+        }
+
+        /* --- Search Modal --- */
+        .search-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            animation: fadeIn 0.2s;
+        }
+
+        .search-modal.active {
+            display: flex;
+        }
+
+        .search-container {
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            margin-top: 80px;
+        }
+
+        .search-input-box {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .search-input-box input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+
+        .search-input-box input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .search-results {
+            background: var(--bg-light);
+            border-radius: 12px;
+            margin-top: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .search-result-item {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .search-result-item:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-item h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .search-result-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .search-empty {
+            padding: 40px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+
+<div id="searchModal" class="search-modal" onclick="closeSearch(event)">
+    <div class="search-container" onclick="event.stopPropagation()">
+        <div class="search-input-box">
+            <span>🔍</span>
+            <input type="text" id="searchInput" placeholder="Search notes..." autofocus>
+            <button class="search-close-btn" onclick="closeSearch()">✕</button>
+        </div>
+        <div id="searchResultsContainer" class="search-results"></div>
+    </div>
+</div>
+
+<div id="mySidebar" class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-title">Aman Notebook</div>
+    </div>
+    
+    <div class="sidebar-menu">
+        <a class="nav-link active" data-view="notes" onclick="switchView('notes')">
+            <span class="sidebar-icon">💡</span>
+            <span>Notes</span>
+        </a>
+        <a class="nav-link" data-view="reminders" onclick="switchView('reminders')">
+            <span class="sidebar-icon">🔔</span>
+            <span>Reminders</span>
+        </a>
+        <a class="nav-link" data-view="archive" onclick="switchView('archive')">
+            <span class="sidebar-icon">📥</span>
+            <span>Archive</span>
+        </a>
+        <a class="nav-link" data-view="deleted" onclick="switchView('deleted')">
+            <span class="sidebar-icon">🗑️</span>
+            <span>Deleted</span>
+        </a>
+
+        <hr class="sidebar-divider">
+
+        <a class="nav-link" data-view="settings" onclick="switchView('settings')">
+            <span class="sidebar-icon">⚙️</span>
+            <span>Settings</span>
+        </a>
+    </div>
+
+    <div class="sidebar-footer">
+        <a href="#" style="display: block; opacity: 0.6;">© 2024 Aman</a>
+    </div>
+</div>
+
+<div id="overlay" class="overlay" onclick="closeNav()"></div>
+
+<header>
+    <div class="menu-icon" onclick="openNav()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="logo">AMAN NOTEBOOK</div>
+    <div class="header-spacer"></div>
+    <div class="header-actions">
+        <button class="icon-btn" id="searchBtn" title="Search">🔍</button>
+    </div>
+</header>
+
+<!-- Notes View -->
+<div id="notes" class="view-section active">
+    <div class="input-container">
+        <div class="input-box">
+            <input type="text" id="title" placeholder="Title" maxlength="100">
+            <textarea id="text" placeholder="Take a note..." maxlength="5000"></textarea>
+            <div class="btn-row">
+                <button class="close-btn" onclick="clearInput()">Clear</button>
+                <button class="save-btn" onclick="save()">Save Note</button>
+            </div>
+        </div>
+    </div>
+    <div id="notesGrid"></div>
+</div>
+
+<!-- Reminders View -->
+<div id="reminders" class="view-section">
+    <div class="section-header">
+        <div class="section-title">🔔 Reminders</div>
+        <div class="section-description">Set reminders for your important notes</div>
+    </div>
+    <div class="empty-state">
+        <div class="empty-icon">📅</div>
+        <div class="empty-text">No reminders set yet. This feature is coming soon!</div>
+    </div>
+</div>
+
+<!-- Archive View -->
+<div id="archive" class="view-section">
+    <div class="section-header">
+        <div class="section-title">📥 Archive</div>
+        <div class="section-description">Archived notes appear here</div>
+    </div>
+    <div id="archiveList" class="items-list"></div>
+</div>
+
+<!-- Deleted View -->
+<div id="deleted" class="view-section">
+    <div class="section-header">
+        <div class="section-title">🗑️ Deleted</div>
+        <div class="section-description">Deleted notes are permanently removed after 7 days</div>
+    </div>
+    <div id="deletedList" class="items-list"></div>
+</div>
+
+<!-- Settings View -->
+<div id="settings" class="view-section">
+    <div class="section-header">
+        <div class="section-title">⚙️ Settings</div>
+        <div class="section-description">Customize your notebook experience</div>
+    </div>
+    <div class="items-list">
+        <div class="item-card">
+            <div class="item-info">
+                <h4>Clear All Data</h4>
+                <p>Remove all notes, archived items, and trash</p>
+            </div>
+            <button class="item-action-btn permanent-delete-btn" onclick="clearAllData()">Clear</button>
+        </div>
+        <div class="item-card">
+            <div class="item-info">
+                <h4>App Version</h4>
+                <p>Aman Notebook v1.0</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Navigation
+    function openNav() {
+        document.getElementById("mySidebar").style.width = "280px";
+        document.getElementById("overlay").style.display = "block";
+    }
+
+    function closeNav() {
+        document.getElementById("mySidebar").style.width = "0";
+        document.getElementById("overlay").style.display = "none";
+    }
+
+    function switchView(viewName) {
+        // Hide all sections
+        document.querySelectorAll('.view-section').forEach(section => {
+            section.classList.remove('active');
+        });
+
+        // Show selected section
+        document.getElementById(viewName).classList.add('active');
+
+        // Update sidebar active state
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        document.querySelector(`[data-view="${viewName}"]`).classList.add('active');
+
+        // Close sidebar on mobile
+        if (window.innerWidth < 768) {
+            closeNav();
+        }
+
+        // Refresh archive and deleted lists
+        if (viewName === 'archive') renderArchive();
+        if (viewName === 'deleted') renderDeleted();
+    }
+
+    // Note Management
+    function save() {
+        const title = document.getElementById('title').value.trim();
+        const text = document.getElementById('text').value.trim();
+        
+        if (!text && !title) {
+            alert('Please write something!');
+            return;
+        }
+
+        const note = { 
+            id: Date.now(), 
+            title: title || 'Untitled', 
+            text: text,
+            created: new Date().toLocaleDateString(),
+            archived: false
+        };
+        
+        const notes = JSON.parse(localStorage.getItem('keep_notes') || '[]');
+        notes.push(note);
+        localStorage.setItem('keep_notes', JSON.stringify(notes));
+
+        clearInput();
+        renderNotes();
+    }
+
+    function clearInput() {
+        document.getElementById('title').value = '';
+        document.getElementById('text').value = '';
+    }
+
+    function renderNotes() {
+        const grid = document.getElementById('notesGrid');
+        grid.innerHTML = '';
+        const notes = JSON.parse(localStorage.getItem('keep_notes') || '[]');
+        const activeNotes = notes.filter(n => !n.archived && !n.deleted);
+        
+        if (activeNotes.length === 0) {
+            grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-secondary);">No notes yet. Create your first note!</div>';
+            return;
+        }
+
+        activeNotes.reverse().forEach(note => {
+            const div = document.createElement('div');
+            div.className = 'note';
+            div.setAttribute('data-note-id', note.id);
+            div.innerHTML = `
+                <h3>${note.title}</h3>
+                <p>${note.text.substring(0, 150)}${note.text.length > 150 ? '...' : ''}</p>
+                <div class="note-actions">
+                    <button class="note-action-btn archive-btn" onclick="archiveNote(${note.id})">Archive</button>
+                    <button class="note-action-btn delete-btn" onclick="deleteNote(${note.id})">Delete</button>
+                </div>
+            `;
+            grid.appendChild(div);
+        });
+    }
+
+    function archiveNote(id) {
+        let notes = JSON.parse(localStorage.getItem('keep_notes') || '[]');
+        notes = notes.map(n => n.id === id ? {...n, archived: true} : n);
+        localStorage.setItem('keep_notes', JSON.stringify(notes));
+        renderNotes();
+    }
+
+    function deleteNote(id) {
+        let notes = JSON.parse(localStorage.getItem('keep_notes') || '[]');
+        notes = notes.map(n => n.id === id ? {...n, deleted: true, deletedDate: new Date().getTime()} : n);
+        localStorage.setItem('keep_notes', JSON.stringify(notes));
+        renderNotes();
+    }
+
+    function renderArchive() {
+        const list = document.getElementById('archiveList');
+        const notes = JSON.parse(localStorage.getItem('keep_notes') || '[]');
+        const archived = notes.filter(n => n.archived && !n.deleted);
+        
+        if (archived.length === 0) {
+            list.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-secondary);">No archived notes</div>';
+            return;
+        }
+
+        list.innerHTML = archived.map(note => `
+            <div class="item-card">
+                <div class="item-info">
+                    <h4>${note.title}</h4>
+                    <p>${note.text.substring(0, 60)}...</p>
+                </div>
+                <div class="item-actions">
+                    <button class="item-action-btn restore-btn" onclick="restoreNote(${note.id})">Restore</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderDeleted() {
+        const list = document.getElementById('deletedList');
+        const notes = JSON.parse(localStorage.getItem('keep_notes') || '[]');
+        const deleted = notes.filter(n => n.deleted);
+        
+        if (deleted.length === 0) {
+            list.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-secondary);">Trash is empty</div>';
+            return;
+        }
+
+        list.innerHTML = deleted.map(note => `
+            <div class="item-card">
+                <div class="item-info">
+                    <h4>${note.title}</h4>
+                    <p>${note.text.substring(0, 60)}...</p>
+                </div>
+                <div class="item-actions">
+                    <button class="item-action-btn restore-btn" onclick="restoreNote(${note.id})">Restore</button>
+                    <button class="item-action-btn permanent-delete-btn" onclick="permanentDelete(${note.id})">Delete</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function restoreNote(id) {
+        let notes = JSON.parse(localStorage.getItem('keep_notes') || '[]');
+        notes = notes.map(n => n.id === id ? {...n, archived: false, deleted: false} : n);
+        localStorage.setItem('keep_notes', JSON.stringify(notes));
+        renderNotes();
+        renderArchive();
+        renderDeleted();
+    }
+
+    function permanentDelete(id) {
+        if (confirm('Are you sure? This cannot be undone.')) {
+            let notes = JSON.parse(localStorage.getItem('keep_notes') || '[]');
+            notes = notes.filter(n => n.id !== id);
+            localStorage.setItem('keep_notes', JSON.stringify(notes));
+            renderDeleted();
+        }
+    }
+
+    function clearAllData() {
+        if (confirm('⚠️ This will delete all your notes, archives, and trash. This cannot be undone!')) {
+            localStorage.removeItem('keep_notes');
+            alert('All data cleared!');
+            renderNotes();
+        }
+    }
+
+    window.onload = renderNotes;
+
+    // Search Functionality
+    document.getElementById('searchBtn').addEventListener('click', () => {
+        document.getElementById('searchModal').classList.add('active');
+        document.getElementById('searchInput').focus();
+    });
+
+    function closeSearch(event) {
+        if (event) event.preventDefault();
+        document.getElementById('searchModal').classList.remove('active');
+        document.getElementById('searchInput').value = '';
+        document.getElementById('searchResultsContainer').innerHTML = '';
+    }
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const resultsContainer = document.getElementById('searchResultsContainer');
+        
+        if (query.length === 0) {
+            resultsContainer.innerHTML = '';
+            return;
+        }
+
+        const notes = JSON.parse(localStorage.getItem('keep_notes') || '[]');
+        const activeNotes = notes.filter(n => !n.deleted);
+        
+        const results = activeNotes.filter(note => 
+            note.title.toLowerCase().includes(query) || 
+            note.text.toLowerCase().includes(query)
+        );
+
+        if (results.length === 0) {
+            resultsContainer.innerHTML = '<div class="search-empty">कोई नोट नहीं मिला</div>';
+            return;
+        }
+
+        resultsContainer.innerHTML = results.map(note => `
+            <div class="search-result-item" onclick="searchResultClick(${note.id})">
+                <h4>${note.title}</h4>
+                <p>${note.text.substring(0, 100)}${note.text.length > 100 ? '...' : ''}</p>
+            </div>
+        `).join('');
+    });
+
+    function searchResultClick(id) {
+        closeSearch();
+        switchView('notes');
+        // Scroll to the note (optional)
+        const notes = JSON.parse(localStorage.getItem('keep_notes') || '[]');
+        const note = notes.find(n => n.id === id);
+        if (note) {
+            setTimeout(() => {
+                const noteElement = document.querySelector(`[data-note-id="${id}"]`);
+                if (noteElement) {
+                    noteElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    noteElement.style.animation = 'none';
+                    setTimeout(() => {
+                        noteElement.style.animation = 'highlight 0.6s';
+                    }, 10);
+                }
+            }, 100);
+        }
+    }
+
+    // Close search on ESC key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeSearch();
+        }
+    });
+</script>
+
+</body>
+</html>
